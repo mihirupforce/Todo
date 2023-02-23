@@ -1,14 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <div>
-        <div>
-            <h3>Edit list:</h3>
-            <h5>{{ todo_list.title|upper}}</h5>
-        </div>
-        <ul>
-            {% for todo in object_list %}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Edit list:</th>
+        </tr>
+        <tr>
+            <th scope="col">{{ todo_list.title|upper}}</th>
+            <th scope="col">
+            <input value="Add a new item" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" />
+            <input value="Delete this list" type="button"
+                onclick="location.href='{% url "list-delete" todo_list.id %}'" /></th>
+        </tr>
+    </thead>
+     <tbody>
+    <tr>
+        <th scope="row">
+            <ol>
+                {% for todo in object_list %}
             <li>
                 <div>
                     <div role="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'">
@@ -16,15 +28,12 @@
                         (Due {{ todo.due_date }})
                     </div>
             </li>
-            {% empty %}
-            <p>There are no to-do items in this list.</p>
-            {% endfor %}
-        </ul>
-        <p>
-            <input value="Add a new item" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" />
-            <input value="Delete this list" type="button"
-                onclick="location.href='{% url "list-delete" todo_list.id %}'" />
-        </p>
-    </div>
-</div>
+                {% empty %}
+                <h4>You have no lists!</h4>
+                {% endfor %}
+            </ol>
+        </th>
+    </tr>
+            
+</table>
 {% endblock %}

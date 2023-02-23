@@ -40,7 +40,7 @@ class ItemCreate(CreateView):
         "description",
         "due_date",
     ]
-
+    
     def get_initial(self):
         initial_data = super().get_initial()
         todo_list = ToDoList.objects.get(id=self.kwargs["list_id"])

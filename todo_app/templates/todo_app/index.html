@@ -1,25 +1,32 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<h3>Add New category</h3>
 {% if object_list %}
 {% endif %}
-<ul>
-    {% for todolist in object_list %}
-    <li>
-        <div role="button"
-            onclick="location.href='{% url "list" todolist.id %}'">
-            {{ todolist.title }}
-        </div>
-    </li>
-    {% empty %}
-    <h4>You have no lists!</h4>
-    {% endfor %}
-</ul>
-<p>
-    <input value="Add a new list" type="button"
-        onclick="location.href='{% url "list-add" %}'"/>
-</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Django To-do category</th>
+            <th scope="col"><input value="Add a new list" type="button" onclick="location.href='{% url "list-add" %}'"/></th>
+        </tr>
+    </thead>
+     <tbody>
+    <tr>
+        <th scope="row">
+            <ol>
+                {% for todolist in object_list %}
+                <li>
+                    <div role="button"
+                        onclick="location.href='{% url "list" todolist.id %}'">
+                        {{ todolist.title }}
+                    </div>
+                </li>
+                {% empty %}
+                <h4>You have no lists!</h4>
+                {% endfor %}
+            </ol>
+        </th>
+    </tr>
+            
+</table>
 
 {% endblock %}
