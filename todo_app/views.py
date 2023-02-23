@@ -2,14 +2,26 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
 from .models import ToDoItem, ToDoList
+import django_filters 
+# from .filters import categoryListingFilter
 
-
-class ListListView(ListView):
+class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
+    queryset=ToDoList.objects.all()
+    print(queryset)
+    def get_queryset(self):
+        return super().get_queryset()
+    # def get_context_data(self):
+    #     listings=ListView.object.all()
+    #     listing_filter =categoryListingFilter(request='GET' , queryset=listings)
+    #     context={
+    #         'listings_filter':listing_filter
+    #     }
+    #     return context
 
 
-class ItemListView(ListView):
+class categoryItemListView(ListView):
     model = ToDoItem
     template_name = "todo_app/todo_list.html"
 
@@ -22,7 +34,7 @@ class ItemListView(ListView):
         return context
 
 
-class ListCreate(CreateView):
+class categoryListCreate(CreateView):
     model = ToDoList
     fields = ["title"]
 
@@ -32,7 +44,7 @@ class ListCreate(CreateView):
         return context
 
 
-class ItemCreate(CreateView):
+class categoryItemCreate(CreateView):
     model = ToDoItem
     fields = [
         "todo_list",
@@ -44,6 +56,7 @@ class ItemCreate(CreateView):
     def get_initial(self):
         initial_data = super().get_initial()
         todo_list = ToDoList.objects.get(id=self.kwargs["list_id"])
+        print(todo_list)
         initial_data["todo_list"] = todo_list
         return initial_data
 
@@ -58,7 +71,7 @@ class ItemCreate(CreateView):
         return reverse("list", args=[self.object.todo_list_id])
 
 
-class ItemUpdate(UpdateView):
+class categoryItemUpdate(UpdateView):
     model = ToDoItem
     fields = [
         "todo_list",
@@ -77,12 +90,12 @@ class ItemUpdate(UpdateView):
         return reverse("list", args=[self.object.todo_list_id])
 
 
-class ListDelete(DeleteView):
+class categoryListDelete(DeleteView):
     model = ToDoList
     success_url = reverse_lazy("index")
 
 
-class ItemDelete(DeleteView):
+class categoryItemDelete(DeleteView):
     model = ToDoItem
 
     def get_success_url(self):
@@ -92,3 +105,6 @@ class ItemDelete(DeleteView):
         context = super().get_context_data(**kwargs)
         context["todo_list"] = self.object.todo_list
         return context
+
+
+

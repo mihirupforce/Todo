@@ -22,7 +22,7 @@ class ToDoList(models.Model):
 class ToDoItem(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    created_date = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateField(auto_now_add=True)
     due_date = models.DateField(default=datetime.now)
     todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
 
