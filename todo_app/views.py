@@ -2,16 +2,26 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
 from .models import ToDoItem, ToDoList
-import django_filters 
-# from .filters import categoryListingFilter
+from django_filters import rest_framework as filters
+from django.db.models import Q
+from django.shortcuts import render
+
+
 
 class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
-    queryset=ToDoList.objects.all()
-    print(queryset)
+    
     def get_queryset(self):
-        return super().get_queryset()
+        queryset = super().get_queryset()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(title__contains=q)
+            print("filtered queryset:", queryset)
+            print("SQL query:", str(queryset.query))
+        return queryset
+
+
     # def get_context_data(self):
     #     listings=ListView.object.all()
     #     listing_filter =categoryListingFilter(request='GET' , queryset=listings)

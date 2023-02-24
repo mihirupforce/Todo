@@ -2,38 +2,48 @@
 
 {% block content %}
 
+<div class="container">
 
-<table class="table">
-    <thead>
+    <table class="table">
+    <thead class="thead-dark">
         <tr>
-            <th scope="col">Edit list:</th>
+            <th scope="col">Edit list: {{ todo_list.title|upper}}</th>
+            <th></th>
+            <th></th>
         </tr>
         <tr>
-            <th scope="col">{{ todo_list.title|upper}}</th>
-            <th scope="col">
-            <input value="Add a new item" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" />
-            <input value="Delete this list" type="button"
-                onclick="location.href='{% url "list-delete" todo_list.id %}'" /></th>
+            <th scope="col">no</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Date</th>
+            <th scope="col">Action
+                <i class="fa fa-plus" aria-hidden="true" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" ></i>
+                <i class="fa fa-trash" style="color:red" onclick="location.href='{% url "list-delete" todo_list.id %}'" ></i>
+            </th>
         </tr>
     </thead>
-     <tbody>
-    <tr>
-        <th scope="row">
-            <ol>
-                {% for todo in object_list %}
-            <li>
+    <tbody>
+        {% for todo in object_list %}
+        <tr>
+            <td scope="row">{{forloop.counter}}</td>
+            <td scope="row">
                 <div>
                     <div role="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'">
                         {{ todo.title }}
-                        (Due {{ todo.due_date }})
+                        {% comment %} (Due {{ todo.due_date }}) {% endcomment %}
                     </div>
-            </li>
-                {% empty %}
-                <h4>You have no lists!</h4>
-                {% endfor %}
-            </ol>
-        </th>
-    </tr>
-            
+                </div>
+            </td>
+            <td scope="col">{{ todo.due_date }}</td>
+            {% csrf_token %}
+            <td scope="col">
+                <i class="fa fa-pencil" aria-hidden="true"   type="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'" ></i>
+                <a href="{% url "item-delete" todo_list.id todo.id %}"><i class="fa fa-trash" style="color:red" ></i></a>
+            </td>
+        </tr>
+                    {% empty %}
+                    <h4>You have no lists!</h4>
+                    {% endfor %}
+    </tbody>
 </table>
+</div>
 {% endblock %}

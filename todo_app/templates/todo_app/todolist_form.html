@@ -1,34 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<table class="table">
-    <thead>
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">{{ title }}</th>
+            </tr>
+        </thead>
+        <tbody>
         <tr>
-            <th scope="col">{{ title }}</th>
-        </tr>
-    </thead>
-     <tbody>
-    <tr>
-        <th scope="row">
-            <div>
+            <th scope="row">
                 <div>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <input value="Save" type="submit">
-                        <input value="Cancel" type="button" onclick="location.href='{% url "index" %}';">
-                    </form>
+                    <div>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <input value="Save" type="submit">
+                            <input value="Cancel" type="button" onclick="location.href='{% url "index" %}';">
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-        </th>
-    </tr>
-            
-</table>
-
-
-
-
-
-
+            </th>
+        </tr>
+                
+    </table>
+</div>
 {% endblock %}

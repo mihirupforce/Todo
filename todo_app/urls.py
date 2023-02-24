@@ -3,7 +3,7 @@ from django.urls import path
 from todo_app import views
 
 urlpatterns = [
-    path("category/", views.categoryListView.as_view(), name="index"),
+    path("", views.categoryListView.as_view(), name="index"),
     path("category/<int:list_id>/", views.categoryItemListView.as_view(), name="list"),
     path("category/add/", views.categoryListCreate.as_view(), name="list-add"),
     path("category/<int:pk>/delete/", views.categoryListDelete.as_view(), name="list-delete"),
