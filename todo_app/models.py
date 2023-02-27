@@ -5,8 +5,7 @@ from django.db import models
 from django.urls import reverse
 from datetime import datetime   
 
-# def one_week_hence():
-#     return timezone.now() + timezone.timedelta(days=7)
+
 
 
 class ToDoList(models.Model):
@@ -30,12 +29,6 @@ class ToDoItem(models.Model):
         return reverse(
             "item-update", args=[str(self.todo_list.id), str(self.id)]
         )
-    
-    def __str__(self):
-        return f"{self.title}: start {self.start_date}"
-
-    def __str__(self):
-        return f"{self.title}: end {self.end_date}"
 
     class Meta:
         ordering = ["due_date"]

@@ -11,26 +11,23 @@
             <th></th>
             <th scope="col">
                 <form class="d-flex" role="search" action="" >
-                    <input class="form-control me-2" type=text" placeholder="Search" aria-label="Search">
+                    <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search"/>
                     <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i> </button>
                 </form>
             </th> 
-            {% comment %} Date fild {% endcomment %}
-            <th scope="col">Start date
-                <input type='date' class="input-group date" data-provide="datepicker">
-                {{ filter.form.due_date }}
-                {% comment %} {% render_field filter.form.row_date class="form-control" %} {% endcomment %}
-                end date
-                <input type='date' class="input-group date" data-provide="datepicker">
-                {{ filter.form.due_date }}
-                {% comment %} {% render_field filter.form.row_date class="form-control" %} {% endcomment %}
-
+            {% comment %} Date {% endcomment %}
+            <th scope="col">
+                <form class="d-flex" role="search" method="GET" action=".">
+                    {{form.as_p}}   
+                    <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i> </button>
+                </form>
             </th>    
         </tr>
         <tr>
             <th scope="col">no</th>
             <th scope="col">Item Name</th>
             <th scope="col">Date</th>
+            <th scope="col">States</th>
             <th scope="col">Action
                 <i class="fa fa-plus" aria-hidden="true" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" ></i>
                 <i class="fa fa-trash" style="color:red" onclick="location.href='{% url "list-delete" todo_list.id %}'" ></i>
@@ -45,11 +42,11 @@
                 <div>
                     <div role="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'">
                         {{ todo.title }}
-                        {% comment %} (Due {{ todo.due_date }}) {% endcomment %}
                     </div>
                 </div>
             </td>
             <td scope="col">{{ todo.due_date }}</td>
+            <td scope="col">1</td>
             {% csrf_token %}
             <td scope="col">
                 <i class="fa fa-pencil" aria-hidden="true"   type="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'" ></i>
@@ -63,9 +60,5 @@
 
 </table>
 </div>
-{% comment %} <script>
-        $( function() {
-            $( "#datepicker" ).datepicker();
-        } );
-</script>  {% endcomment %}
+
 {% endblock %}

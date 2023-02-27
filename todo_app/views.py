@@ -1,90 +1,53 @@
 # todo_list/todo_app/views.py
+from urllib import request
 from django.forms import DateInput
+from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
+from django.contrib import messages
+from todo_app.forms import DateSearch
 from .models import ToDoItem, ToDoList
 from django_filters import rest_framework as filters
 from django.db.models import Q
-from django.shortcuts import render
-import django_filters
+from django.contrib import messages
 
-
+# category List View
 class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
-    
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     q = self.request.GET.get('q')
-    #     if q:
-    #         queryset = queryset.filter(title__contains=q)
-    #         print("filtered queryset:", queryset)
-    #         print("SQL query:", str(queryset.query))
-    #     return queryset
 
 
-    # def get_context_data(self):
-    #     listings=ListView.object.all()
-    #     listing_filter =categoryListingFilter(request='GET' , queryset=listings)
-    #     context={
-    #         'listings_filter':listing_filter
-    #     }
-    #     return context
-
-
+# category Item List View
 class categoryItemListView(ListView):
     model = ToDoItem
     template_name = "todo_app/todo_list.html"
     
 
     def get_queryset(self):
-        return ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"])
+        queryset = ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"])
+        start_date = self.request.GET.get('start_date')
+        end_date = self.request.GET.get('end_date')
+        if start_date and end_date:
+            queryset = queryset.filter(Q(due_date__gte=start_date)&Q(due_date__lte=end_date))
+        elif start_date and end_date:
+           queryset = queryset.filter(Q(due_date__gte=start_date)!=Q(due_date__lte=end_date))
+           return render(messages.warning(request, 'select valide date'))
+        return queryset 
 
     def get_context_data(self):
         context = super().get_context_data()
-        context["title"] = "List view"
         context["todo_list"] = ToDoList.objects.get(id=self.kwargs["list_id"])
+        context["form"] = DateSearch()
         return context
-# item search
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     q = self.request.GET.get('q')
-    #     if q:
-    #         queryset = ToDoItem.objects.filter(Q(title__iexact=str(q)))
-    #         print("SQL query:", str(queryset.query))
-    #     print("filtered queryset:", queryset)
-    #     return queryset
 
 
-# item date search
-    # class AvailFilter(django_filters.FilterSet):
-
-    #  class Meta:
-    
-    #     model   = ToDoItem
-    #     widgets = {'due_date': DateInput(),}
-    #     fields  = ['due_date']
-
-    # class AvailFilter(django_filters.FilterSet):
-    #     due_date = django_filters.DateFilter(widget=DateInput(attrs={'type': 'date'}))
-    def get_context_data(self):
-        date = super().get_context_data()
-        date["due_date"]= ToDoItem.objects.filter(due_date=self.__str__)
-        return date
-
-
+# category List Create
 class categoryListCreate(CreateView):
     model = ToDoList
     fields = ["title"]
 
-    def get_context_data(self):
-        context = super().get_context_data()
-        context["title"] = "Add a new list"
-        return context
-    
-    
 
-
+# category Item Create
 class categoryItemCreate(CreateView):
     model = ToDoItem
     fields = [
@@ -115,6 +78,8 @@ class categoryItemCreate(CreateView):
     def due_date(date):
         pass
 
+
+# category Item Update
 class categoryItemUpdate(UpdateView):
     model = ToDoItem
     fields = [
@@ -136,12 +101,13 @@ class categoryItemUpdate(UpdateView):
     def get_success_url(self):
         return reverse("list", args=[self.object.todo_list_id])
 
-
+# category List Delete
 class categoryListDelete(DeleteView):
     model = ToDoList
     success_url = reverse_lazy("index")
 
 
+# category Item Delete
 class categoryItemDelete(DeleteView):
     model = ToDoItem
 
