@@ -1,25 +1,26 @@
 # todo_list/todo_app/views.py
+from django.forms import DateInput
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
 from .models import ToDoItem, ToDoList
 from django_filters import rest_framework as filters
 from django.db.models import Q
 from django.shortcuts import render
-
+import django_filters
 
 
 class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
     
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        q = self.request.GET.get('q')
-        if q:
-            queryset = queryset.filter(title__contains=q)
-            print("filtered queryset:", queryset)
-            print("SQL query:", str(queryset.query))
-        return queryset
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     q = self.request.GET.get('q')
+    #     if q:
+    #         queryset = queryset.filter(title__contains=q)
+    #         print("filtered queryset:", queryset)
+    #         print("SQL query:", str(queryset.query))
+    #     return queryset
 
 
     # def get_context_data(self):
@@ -34,14 +35,42 @@ class categoryListView(ListView):
 class categoryItemListView(ListView):
     model = ToDoItem
     template_name = "todo_app/todo_list.html"
+    
 
     def get_queryset(self):
         return ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"])
 
     def get_context_data(self):
         context = super().get_context_data()
+        context["title"] = "List view"
         context["todo_list"] = ToDoList.objects.get(id=self.kwargs["list_id"])
         return context
+# item search
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     q = self.request.GET.get('q')
+    #     if q:
+    #         queryset = ToDoItem.objects.filter(Q(title__iexact=str(q)))
+    #         print("SQL query:", str(queryset.query))
+    #     print("filtered queryset:", queryset)
+    #     return queryset
+
+
+# item date search
+    # class AvailFilter(django_filters.FilterSet):
+
+    #  class Meta:
+    
+    #     model   = ToDoItem
+    #     widgets = {'due_date': DateInput(),}
+    #     fields  = ['due_date']
+
+    # class AvailFilter(django_filters.FilterSet):
+    #     due_date = django_filters.DateFilter(widget=DateInput(attrs={'type': 'date'}))
+    def get_context_data(self):
+        date = super().get_context_data()
+        date["due_date"]= ToDoItem.objects.filter(due_date=self.__str__)
+        return date
 
 
 class categoryListCreate(CreateView):
@@ -52,6 +81,8 @@ class categoryListCreate(CreateView):
         context = super().get_context_data()
         context["title"] = "Add a new list"
         return context
+    
+    
 
 
 class categoryItemCreate(CreateView):
@@ -62,11 +93,13 @@ class categoryItemCreate(CreateView):
         "description",
         "due_date",
     ]
-    
+    widgets = {
+        'due_date': DateInput(),
+    }
+
     def get_initial(self):
         initial_data = super().get_initial()
         todo_list = ToDoList.objects.get(id=self.kwargs["list_id"])
-        print(todo_list)
         initial_data["todo_list"] = todo_list
         return initial_data
 
@@ -79,7 +112,8 @@ class categoryItemCreate(CreateView):
 
     def get_success_url(self):
         return reverse("list", args=[self.object.todo_list_id])
-
+    def due_date(date):
+        pass
 
 class categoryItemUpdate(UpdateView):
     model = ToDoItem
@@ -87,8 +121,11 @@ class categoryItemUpdate(UpdateView):
         "todo_list",
         "title",
         "description",
-        "due_date",
+        "due_date"
     ]
+    widgets = {
+        'due_date': DateInput(),
+    }
 
     def get_context_data(self):
         context = super().get_context_data()
