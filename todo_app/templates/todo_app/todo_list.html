@@ -5,60 +5,55 @@
 <div class="container">
 
     <table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Edit list: {{ todo_list.title|upper}}</th>
-            <th></th>
-            <th scope="col">
-                <form class="d-flex" role="search" action="" >
-                    <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search"/>
-                    <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i> </button>
-                </form>
-            </th> 
-            {% comment %} Date {% endcomment %}
-            <th scope="col">
-                <form class="d-flex" role="search" method="GET" action=".">
-                    {{form.as_p}}   
-                    <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i> </button>
-                </form>
-            </th>    
-        </tr>
-        <tr>
-            <th scope="col">no</th>
-            <th scope="col">Item Name</th>
-            <th scope="col">Date</th>
-            <th scope="col">States</th>
-            <th scope="col">Action
-                <i class="fa fa-plus" aria-hidden="true" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" ></i>
-                <i class="fa fa-trash" style="color:red" onclick="location.href='{% url "list-delete" todo_list.id %}'" ></i>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for todo in object_list %}
-        <tr>
-            <td scope="row">{{forloop.counter}}</td>
-            <td scope="row">
-                <div>
-                    <div role="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'">
-                        {{ todo.title }}
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Edit list: {{ todo_list.title|upper}}</th>
+                <th></th>
+                <th></th>
+                {% comment %} Date {% endcomment %}
+                <th scope="col">
+                    <form class="d-flex" role="search" method="GET" action=".">
+                             {{form.as_p}}
+                        <button class="btn btn-outline-success" type="submit"><i class="fa fa-search"></i> </button>
+                    </form>
+                </th>    
+            </tr>
+            <tr>
+                <th scope="col">no</th>
+                <th scope="col">Item Name</th>
+                <th scope="col">Date</th>
+                <th scope="col">States</th>
+                <th scope="col">Action
+                    <i class="fa fa-plus" aria-hidden="true" type="button" onclick="location.href='{% url "item-add" todo_list.id %}'" ></i>
+                    <i class="fa fa-trash" style="color:red" onclick="location.href='{% url "list-delete" todo_list.id %}'" ></i>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for todo in object_list %}
+            <tr>
+                <td scope="row">{{forloop.counter}}</td>
+                <td scope="row">
+                    <div>
+                        <div role="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'">
+                            {{ todo.title }}
+                        </div>
                     </div>
-                </div>
-            </td>
-            <td scope="col">{{ todo.due_date }}</td>
-            <td scope="col">1</td>
-            {% csrf_token %}
-            <td scope="col">
-                <i class="fa fa-pencil" aria-hidden="true"   type="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'" ></i>
-                <a href="{% url "item-delete" todo_list.id todo.id %}"><i class="fa fa-trash" style="color:red" ></i></a>
-            </td>
-        </tr>
-                    {% empty %}
-                    <h4>You have no lists!</h4>
-                    {% endfor %}
-    </tbody>
-
-</table>
+                </td>
+                <td scope="col">{{ todo.due_date }}</td>
+                <td scope="col">{{ todo.is_completed }}</div>
+                </td>
+                {% csrf_token %}
+                <td scope="col">
+                    <i class="fa fa-pencil" aria-hidden="true"   type="button" onclick="location.href='{% url "item-update" todo_list.id todo.id %}'" ></i>
+                    <a href="{% url "item-delete" todo_list.id todo.id %}"><i class="fa fa-trash" style="color:red" ></i></a>
+                </td>
+                {% empty %}
+                <h4>You have no lists!</h4>
+                {% endfor %}
+            </tr>
+        </tbody>
+     </table>
 </div>
 
 {% endblock %}

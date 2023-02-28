@@ -1,11 +1,7 @@
 # todo_list/todo_app/models.py
-from django.utils import timezone
-
 from django.db import models
 from django.urls import reverse
-from datetime import datetime   
-
-
+from datetime import datetime
 
 
 class ToDoList(models.Model):
@@ -24,6 +20,7 @@ class ToDoItem(models.Model):
     created_date = models.DateField(auto_now_add=True)
     due_date = models.DateField(default=datetime.now)
     todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
+    is_completed = models.BooleanField(default=False)
 
     def url(self):
         return reverse(

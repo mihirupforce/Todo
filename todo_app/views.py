@@ -1,17 +1,14 @@
 # todo_list/todo_app/views.py
-from urllib import request
 from django.forms import DateInput
-from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView,CreateView,UpdateView,DeleteView
-from django.contrib import messages
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from todo_app.forms import DateSearch
 from .models import ToDoItem, ToDoList
-from django_filters import rest_framework as filters
 from django.db.models import Q
-from django.contrib import messages
 
 # category List View
+
+
 class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
@@ -21,23 +18,23 @@ class categoryListView(ListView):
 class categoryItemListView(ListView):
     model = ToDoItem
     template_name = "todo_app/todo_list.html"
-    
 
     def get_queryset(self):
         queryset = ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"])
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         if start_date and end_date:
-            queryset = queryset.filter(Q(due_date__gte=start_date)&Q(due_date__lte=end_date))
-        elif start_date and end_date:
-           queryset = queryset.filter(Q(due_date__gte=start_date)!=Q(due_date__lte=end_date))
-           return render(messages.warning(request, 'select valide date'))
-        return queryset 
+            queryset = queryset.filter(due_date__range=[start_date, end_date])
+        elif start_date:
+            queryset = queryset.filter(Q(due_date__gte=start_date))
+        elif end_date:
+            queryset = queryset.filter(Q(due_date__lte=end_date))
+        return queryset
 
     def get_context_data(self):
         context = super().get_context_data()
         context["todo_list"] = ToDoList.objects.get(id=self.kwargs["list_id"])
-        context["form"] = DateSearch()
+        context["form"] = DateSearch(self.request.GET)
         return context
 
 
@@ -54,6 +51,7 @@ class categoryItemCreate(CreateView):
         "todo_list",
         "title",
         "description",
+        "is_completed",
         "due_date",
     ]
     widgets = {
@@ -75,6 +73,7 @@ class categoryItemCreate(CreateView):
 
     def get_success_url(self):
         return reverse("list", args=[self.object.todo_list_id])
+
     def due_date(date):
         pass
 
@@ -86,7 +85,8 @@ class categoryItemUpdate(UpdateView):
         "todo_list",
         "title",
         "description",
-        "due_date"
+        "is_completed",
+        "due_date",
     ]
     widgets = {
         'due_date': DateInput(),
@@ -102,6 +102,8 @@ class categoryItemUpdate(UpdateView):
         return reverse("list", args=[self.object.todo_list_id])
 
 # category List Delete
+
+
 class categoryListDelete(DeleteView):
     model = ToDoList
     success_url = reverse_lazy("index")
@@ -118,6 +120,3 @@ class categoryItemDelete(DeleteView):
         context = super().get_context_data(**kwargs)
         context["todo_list"] = self.object.todo_list
         return context
-
-
-
