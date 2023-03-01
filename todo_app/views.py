@@ -1,18 +1,44 @@
 # todo_list/todo_app/views.py
 from django.forms import DateInput
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from todo_app.forms import DateSearch
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView,FormView
+from todo_app.forms import DateSearch, UserRegistrationForm
 from .models import ToDoItem, ToDoList
 from django.db.models import Q
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic.edit import FormView
+from django.contrib.auth.views import LoginView
+
+
+#  UserSignup
+class UserSignup(FormView):
+    template_name = 'todo_app/Signup.html'
+    form_class = UserRegistrationForm
+    redirect_authenticated_user = True
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        user = form.save()
+        if user is not None:
+            login(self.request, user)
+        return super(UserSignup, self).form_valid(form)
+
+
+#  UserLoginView
+class UserLoginView(LoginView):
+    template_name = 'todo_app/signin.html'
+    form_class = AuthenticationForm
+    redirect_authenticated_user = True
+    success_url = reverse_lazy('index')
+
+    
+
 
 # category List View
-
-
 class categoryListView(ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
-
 
 # category Item List View
 class categoryItemListView(ListView):
