@@ -56,7 +56,7 @@ class categoryItemListView(LoginRequiredMixin,ListView):
     template_name = "todo_app/todo_list.html"
 
     def get_queryset(self):
-        queryset = ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"])
+        queryset = ToDoItem.objects.filter(todo_list_id=self.kwargs["list_id"],todo_list__owner=self.request.user)
         start_date = self.request.GET.get('start_date')
         end_date = self.request.GET.get('end_date')
         if start_date and end_date:
@@ -100,7 +100,6 @@ class categoryItemCreate(LoginRequiredMixin,CreateView):
         "due_date",
     )
     widgets = {
-        'todo_list': HiddenInput(),
         'due_date': DateInput(),
     }
     
@@ -123,9 +122,9 @@ class categoryItemCreate(LoginRequiredMixin,CreateView):
     def due_date(date):
         pass
         
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.owner = self.request.user
+    #     return super().form_valid(form)
 
 # category Item Update
 class categoryItemUpdate(LoginRequiredMixin,UpdateView):
