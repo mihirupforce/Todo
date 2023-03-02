@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 #  UserSignup
@@ -36,12 +37,20 @@ class UserLoginView(LoginView):
 
 
 # category List View
-class categoryListView(ListView):
+class categoryListView(LoginRequiredMixin,ListView):
     model = ToDoList
     template_name = "todo_app/index.html"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(owner=self.request.user)
+        return queryset  
+    def form_valid(self, form):
+            form.instance.owner = self.request.user
+            return super().form_valid(form)
+
 # category Item List View
-class categoryItemListView(ListView):
+class categoryItemListView(LoginRequiredMixin,ListView):
     model = ToDoItem
     template_name = "todo_app/todo_list.html"
 
@@ -63,15 +72,24 @@ class categoryItemListView(ListView):
         context["form"] = DateSearch(self.request.GET)
         return context
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 # category List Create
-class categoryListCreate(CreateView):
+class categoryListCreate(LoginRequiredMixin,CreateView):
     model = ToDoList
     fields = ["title"]
 
+    def get_queryset(self):
+        return super().get_queryset()
+    
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 # category Item Create
-class categoryItemCreate(CreateView):
+class categoryItemCreate(LoginRequiredMixin,CreateView):
     model = ToDoItem
     fields = [
         "todo_list",
@@ -102,10 +120,13 @@ class categoryItemCreate(CreateView):
 
     def due_date(date):
         pass
-
+        
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 # category Item Update
-class categoryItemUpdate(UpdateView):
+class categoryItemUpdate(LoginRequiredMixin,UpdateView):
     model = ToDoItem
     fields = [
         "todo_list",
@@ -127,16 +148,23 @@ class categoryItemUpdate(UpdateView):
     def get_success_url(self):
         return reverse("list", args=[self.object.todo_list_id])
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
 # category List Delete
 
-
-class categoryListDelete(DeleteView):
+class categoryListDelete(LoginRequiredMixin,DeleteView):
     model = ToDoList
     success_url = reverse_lazy("index")
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 # category Item Delete
-class categoryItemDelete(DeleteView):
+class categoryItemDelete(LoginRequiredMixin,DeleteView):
     model = ToDoItem
 
     def get_success_url(self):
@@ -146,3 +174,7 @@ class categoryItemDelete(DeleteView):
         context = super().get_context_data(**kwargs)
         context["todo_list"] = self.object.todo_list
         return context
+    
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)

@@ -8,7 +8,6 @@
     {% csrf_token %}
     <input type="submit" value="Yes, delete." />
   </form>
-  <input value="Cancel" type="button" onclick="location.href='{% url "index"
-  %}';">
+  <input value="Cancel" type="button" onclick="location.href='{% url "index"%}';">
 </div>
 {% endblock %}
