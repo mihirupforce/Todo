@@ -162,9 +162,7 @@ class categoryListDelete(LoginRequiredMixin,DeleteView):
     model = ToDoList
     success_url = reverse_lazy("index")
 
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
+   
 
 # category Item Delete
 class categoryItemDelete(LoginRequiredMixin,DeleteView):
@@ -177,7 +175,3 @@ class categoryItemDelete(LoginRequiredMixin,DeleteView):
         context = super().get_context_data(**kwargs)
         context["todo_list"] = self.object.todo_list
         return context
-    
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
