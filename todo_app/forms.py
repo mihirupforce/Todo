@@ -19,16 +19,6 @@ class DateSearch(forms.Form):
                 "Start date should be smaller than end date")
 
 
-# class AuthenticationForm(forms.Form):
-#     username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}))
-#     password = forms.CharField(
-#         label=("Password"),
-#         strip=False,
-#         widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
-#     )
-
-
-
 class UserRegistrationForm(UserCreationForm):
 
     class Meta:

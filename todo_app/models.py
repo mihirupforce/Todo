@@ -24,13 +24,18 @@ class ToDoItem(models.Model):
     description = models.TextField(null=True, blank=True)
     created_date = models.DateField(auto_now_add=True)
     due_date = models.DateField(default=datetime.now)
-    todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
+    todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
 
     def url(self):
         return reverse(
             "item-update", args=[str(self.todo_list.id), str(self.id)]
         )
 
+    def __str__(self):
+        return self.title
+    
     class Meta:
         ordering = ["due_date"]
+
+    

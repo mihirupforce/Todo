@@ -10,6 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms.widgets import HiddenInput
 
 
 #  UserSignup
@@ -91,17 +92,18 @@ class categoryListCreate(LoginRequiredMixin,CreateView):
 # category Item Create
 class categoryItemCreate(LoginRequiredMixin,CreateView):
     model = ToDoItem
-    fields = [
+    fields = (
         "todo_list",
         "title",
         "description",
         "is_completed",
         "due_date",
-    ]
+    )
     widgets = {
+        'todo_list': HiddenInput(),
         'due_date': DateInput(),
     }
-
+    
     def get_initial(self):
         initial_data = super().get_initial()
         todo_list = ToDoList.objects.get(id=self.kwargs["list_id"])
@@ -128,14 +130,15 @@ class categoryItemCreate(LoginRequiredMixin,CreateView):
 # category Item Update
 class categoryItemUpdate(LoginRequiredMixin,UpdateView):
     model = ToDoItem
-    fields = [
+    fields = (
         "todo_list",
         "title",
         "description",
         "is_completed",
         "due_date",
-    ]
+    )
     widgets = {
+        'todo_list': HiddenInput(),
         'due_date': DateInput(),
     }
 
